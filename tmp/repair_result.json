@@ -1,0 +1,1 @@
+{"status":"repaired","root_cause":"Detected a likely Sinkhorn marginal/normalization issue or used deterministic mock repair.","repair_summary":"Applied deterministic repair patch if the known demo bug was present.","remaining_limitations":["Mock repair only fixes the known marginal-normalization demo bug."],"modified_files":["src/guardalign_op.py","implementation_report.md"]}

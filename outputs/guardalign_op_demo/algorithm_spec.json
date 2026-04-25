@@ -1,0 +1,43 @@
+{
+  "algorithm_name": "guardalign_op",
+  "research_context": "GuardAlign-style OP module for multimodal safety scoring",
+  "task_type": "paper_specific_optimal_transport_module",
+  "goal": "Compute cosine-distance cost matrix, Sinkhorn transport plan, patch-level suspiciousness scores, and a global score.",
+  "inputs": {
+    "image_embeds": "Tensor[M, D], image patch embeddings",
+    "text_embeds": "Tensor[N, D], unsafe text/concept embeddings"
+  },
+  "outputs": {
+    "cost_matrix": "Tensor[M, N]",
+    "transport_plan": "Tensor[M, N]",
+    "patch_scores": "Tensor[M]",
+    "global_score": "scalar tensor"
+  },
+  "core_equations": [
+    "C(m,n)=1-cos(x_m,z_n)",
+    "patch_score(m)=sum_n T(m,n)*C(m,n)"
+  ],
+  "core_steps": [
+    "validate input shapes",
+    "L2-normalize image and text embeddings",
+    "compute cosine-distance cost matrix",
+    "run entropic Sinkhorn with uniform marginals",
+    "compute patch-level scores",
+    "aggregate global score"
+  ],
+  "engineering_assumptions": [
+    "Uses entropic Sinkhorn because the prompt asks for Sinkhorn OT.",
+    "Uses uniform marginals unless otherwise specified.",
+    "Uses synthetic embeddings for default unit tests.",
+    "POT/GeomLoss are optional reference oracles, not required dependencies."
+  ],
+  "required_tests": [
+    "cost matrix shape and finite values",
+    "transport plan non-negativity",
+    "transport marginal constraints",
+    "identity matching toy case",
+    "permutation matching toy case",
+    "patch score shape",
+    "invalid shape raises ValueError"
+  ]
+}
