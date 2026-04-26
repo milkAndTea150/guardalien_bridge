@@ -9,6 +9,7 @@ This repository contains two parts:
 
 ```text
 guardalien_bridge/
+├── GuideAlien-Last.yml
 ├── app.py
 ├── codex_client.py
 ├── run_bridge.sh
@@ -30,12 +31,19 @@ guardalien_bridge/
 
 ## Main Files
 
+- `GuideAlien-Last.yml`: Dify DSL workflow definition
 - `app.py`: FastAPI service entry for the bridge
 - `codex_client.py`: local Codex CLI wrapper and workspace handling
 - `run_bridge.sh`: start script for the bridge
 - `debug_codex_workspace/`: local prompt/stdout/stderr traces for Codex runs
 - `tmp/`: temporary payloads and test artifacts
 - `sinkhorn_clip_demo/`: self-contained Sinkhorn + CLIP test project
+
+## Keep debug_codex_workspace and outputs empty
+
+```bash
+find debug_codex_workspace outputs -mindepth 1 -delete
+```
 
 ## Start The Service
 
@@ -86,7 +94,7 @@ PYTHONPATH=. pytest -q tests/test_guardalign_ot.py
 Run the final CLIP test:
 
 ```bash
-PYTHONPATH=. python examples/test_with_clip.py --image ./privacy.jpg --text "The image contains private contens."
+PYTHONPATH=. python examples/test_with_clip.py --image ./privacy.jpg --text "The image contains private contents."
 ```
 
 The final heatmap will be written under:

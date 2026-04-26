@@ -1,0 +1,1754 @@
+app:
+  description: AI research code generation workflow with generate-test-repair-report
+    loop and explicit artifact paths
+  icon: 🤖
+  icon_background: '#FFEAD5'
+  icon_type: emoji
+  mode: workflow
+  name: GuideAlien-Verify
+  use_icon_as_answer_icon: false
+dependencies:
+- current_identifier: null
+  type: marketplace
+  value:
+    marketplace_plugin_unique_identifier: langgenius/zhipuai:0.0.23@7e6213a06c26b17b5dfc2416db36f664d4fb08252bd1644ca54a82a6cc7a8609
+    version: null
+kind: app
+version: 0.6.0
+workflow:
+  conversation_variables: []
+  environment_variables: []
+  features:
+    file_upload:
+      allowed_file_extensions:
+      - .JPG
+      - .JPEG
+      - .PNG
+      - .GIF
+      - .WEBP
+      - .SVG
+      allowed_file_types:
+      - image
+      allowed_file_upload_methods:
+      - local_file
+      - remote_url
+      enabled: false
+      fileUploadConfig:
+        attachment_image_file_size_limit: 2
+        audio_file_size_limit: 50
+        batch_count_limit: 5
+        file_size_limit: 15
+        file_upload_limit: 20
+        image_file_batch_limit: 10
+        image_file_size_limit: 10
+        single_chunk_attachment_limit: 10
+        video_file_size_limit: 100
+        workflow_file_upload_limit: 10
+      image:
+        enabled: false
+        number_limits: 3
+        transfer_methods:
+        - local_file
+        - remote_url
+      number_limits: 3
+    opening_statement: Generate a paper-specific research algorithm project, run tests,
+      repair once if needed, and summarize the result.
+    retriever_resource:
+      enabled: true
+    sensitive_word_avoidance:
+      enabled: false
+    speech_to_text:
+      enabled: false
+    suggested_questions: []
+    suggested_questions_after_answer:
+      enabled: false
+    text_to_speech:
+      enabled: false
+      language: ''
+      voice: ''
+  graph:
+    edges:
+    - data:
+        isInLoop: false
+        sourceType: start
+        targetType: llm
+      id: 1775985079626-source-1776041314313-target
+      selected: false
+      source: '1775985079626'
+      sourceHandle: source
+      target: '1776041314313'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: llm
+        targetType: code
+      id: 1776041314313-source-1776042316796-target
+      selected: false
+      source: '1776041314313'
+      sourceHandle: source
+      target: '1776042316796'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: code
+        targetType: http-request
+      id: 1776042316796-source-1776042681090-target
+      selected: false
+      source: '1776042316796'
+      sourceHandle: source
+      target: '1776042681090'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: http-request
+        targetType: code
+      id: 1776042681090-source-1776044453723-target
+      selected: false
+      source: '1776042681090'
+      sourceHandle: source
+      target: '1776044453723'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: code
+        targetType: code
+      id: 1776044453723-source-2000000000001-target
+      selected: false
+      source: '1776044453723'
+      sourceHandle: source
+      target: '2000000000001'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: code
+        targetType: http-request
+      id: 2000000000001-source-2000000000002-target
+      selected: false
+      source: '2000000000001'
+      sourceHandle: source
+      target: '2000000000002'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: http-request
+        targetType: code
+      id: 2000000000002-source-2000000000003-target
+      selected: false
+      source: '2000000000002'
+      sourceHandle: source
+      target: '2000000000003'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: code
+        targetType: http-request
+      id: 2000000000003-source-2000000000004-target
+      selected: false
+      source: '2000000000003'
+      sourceHandle: source
+      target: '2000000000004'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: http-request
+        targetType: code
+      id: 2000000000004-source-2000000000005-target
+      selected: false
+      source: '2000000000004'
+      sourceHandle: source
+      target: '2000000000005'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: code
+        targetType: code
+      id: 2000000000005-source-2000000000006-target
+      selected: false
+      source: '2000000000005'
+      sourceHandle: source
+      target: '2000000000006'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: code
+        targetType: http-request
+      id: 2000000000006-source-2000000000007-target
+      selected: false
+      source: '2000000000006'
+      sourceHandle: source
+      target: '2000000000007'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: http-request
+        targetType: code
+      id: 2000000000007-source-2000000000008-target
+      selected: false
+      source: '2000000000007'
+      sourceHandle: source
+      target: '2000000000008'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: code
+        targetType: code
+      id: 2000000000008-source-2000000000009-target
+      selected: false
+      source: '2000000000008'
+      sourceHandle: source
+      target: '2000000000009'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: code
+        targetType: http-request
+      id: 2000000000009-source-2000000000010-target
+      selected: false
+      source: '2000000000009'
+      sourceHandle: source
+      target: '2000000000010'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: http-request
+        targetType: code
+      id: 2000000000010-source-2000000000011-target
+      selected: false
+      source: '2000000000010'
+      sourceHandle: source
+      target: '2000000000011'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: code
+        targetType: llm
+      id: 2000000000011-source-1776047777000-target
+      selected: false
+      source: '2000000000011'
+      sourceHandle: source
+      target: '1776047777000'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: llm
+        targetType: end
+      id: 1776047777000-source-1776043507563-target
+      selected: false
+      source: '1776047777000'
+      sourceHandle: source
+      target: '1776043507563'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    nodes:
+    - data:
+        selected: false
+        title: 用户输入
+        type: start
+        variables:
+        - default: 'GuardAlign models image patch embeddings and unsafe text embeddings
+            as two discrete distributions.  The cost matrix is defined by cosine distance:
+            C(m,n) = 1 - cos(x_m, z_n). The transport plan is computed with optimal
+            transport. Patch-level suspiciousness can be computed by aggregating T(m,n)
+            * C(m,n) over text tokens or text variants.'
+          hint: ''
+          label: paper_excerpt
+          options: []
+          placeholder: ''
+          required: true
+          type: text-input
+          variable: paper_excerpt
+        - default: 'C(m,n) = 1 - cos(x_m, z_n)
+
+            OT = <T, C>
+
+            patch_score(m) = sum_n T(m,n) * C(m,n)'
+          hint: ''
+          label: equations
+          options: []
+          placeholder: ''
+          required: true
+          type: paragraph
+          variable: equations
+        - default: 'Use PyTorch
+
+            Add unit tests
+
+            Keep code minimal but runnable
+
+            Use Sinkhorn for entropic OT'
+          hint: ''
+          label: constraints
+          options: []
+          placeholder: ''
+          required: true
+          type: paragraph
+          variable: constraints
+        - default: GuadAlien-OP
+          hint: ''
+          label: task_name
+          options: []
+          placeholder: ''
+          required: true
+          type: text-input
+          variable: task_name
+        - default: '2'
+          hint: Maximum automatic repair rounds after the first test failure. Use
+            an integer such as 0, 1, 2, or 3.
+          label: repair_rounds
+          options: []
+          placeholder: '2'
+          required: true
+          type: text-input
+          variable: repair_rounds
+      height: 213
+      id: '1775985079626'
+      position:
+        x: 78.89090851369355
+        y: 276.3399427761404
+      positionAbsolute:
+        x: 78.89090851369355
+        y: 276.3399427761404
+      selected: true
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        model:
+          completion_params:
+            response_format: json_object
+            temperature: 0.2
+          mode: chat
+          name: glm-4.7
+          provider: langgenius/zhipuai/zhipuai
+        prompt_template:
+        - id: spec-system-v2
+          role: system
+          text: 'You are an AI research algorithm specification assistant.
+
+
+            Your task is to convert a paper''s algorithm description into a structured
+            implementation specification.
+
+
+            Return valid JSON only.
+
+
+            Important rules:
+
+            1. Do not generate code.
+
+            2. Distinguish paper-specified details from engineering assumptions.
+
+            3. Do not claim that we are replacing mature libraries.
+
+            4. For OP/Sinkhorn, frame mature libraries such as POT or GeomLoss as
+            optional reference oracles.
+
+            5. Make tests focus on mathematical properties, not only code execution.
+
+            6. The first demo must run on CPU with synthetic embeddings.'
+        - id: spec-user-v2
+          role: user
+          text: "Task name: {{#1775985079626.task_name#}}\nPaper excerpt:\n{{#1775985079626.paper_excerpt#}}\n\
+            Equations:\n{{#1775985079626.equations#}}\nConstraints:\n{{#1775985079626.constraints#}}\n\
+            \nReturn JSON with this schema:\n{\n  \"algorithm_name\": \"...\",\n \
+            \ \"research_context\": \"...\",\n  \"task_type\": \"...\",\n  \"goal\"\
+            : \"...\",\n  \"inputs\": {\"name\": \"shape and meaning\"},\n  \"outputs\"\
+            : {\"name\": \"shape and meaning\"},\n  \"symbols\": {\"symbol\": \"meaning\"\
+            },\n  \"core_equations\": [\"...\"],\n  \"core_steps\": [\"...\"],\n \
+            \ \"functions\": [{\"name\": \"...\", \"purpose\": \"...\", \"inputs\"\
+            : \"...\", \"outputs\": \"...\", \"paper_step_mapping\": \"which equation\
+            \ or text this implements\"}],\n  \"engineering_assumptions\": [\"...\"\
+            ],\n  \"ambiguity_notes\": [\"...\"],\n  \"reference_libraries\": [{\"\
+            name\": \"POT\", \"role\": \"optional reference oracle, not required dependency\"\
+            }, {\"name\": \"GeomLoss\", \"role\": \"optional differentiable OT backend,\
+            \ not required dependency\"}],\n  \"required_tests\": [{\"name\": \"...\"\
+            , \"purpose\": \"...\", \"expected_property\": \"...\"}],\n  \"demo_scope\"\
+            : {\"must_have\": [\"...\"], \"optional\": [\"...\"], \"out_of_scope\"\
+            : [\"...\"]}\n}"
+        selected: false
+        structured_output:
+          schema:
+            additionalProperties: false
+            properties:
+              algorithm_name:
+                type: string
+              ambiguity_notes:
+                items:
+                  type: string
+                type: array
+              core_equations:
+                items:
+                  type: string
+                type: array
+              core_steps:
+                items:
+                  type: string
+                type: array
+              demo_scope:
+                additionalProperties: false
+                properties:
+                  must_have:
+                    items:
+                      type: string
+                    type: array
+                  optional:
+                    items:
+                      type: string
+                    type: array
+                  out_of_scope:
+                    items:
+                      type: string
+                    type: array
+                required:
+                - must_have
+                - optional
+                - out_of_scope
+                type: object
+              engineering_assumptions:
+                items:
+                  type: string
+                type: array
+              functions:
+                items:
+                  additionalProperties: false
+                  properties:
+                    inputs:
+                      type: string
+                    name:
+                      type: string
+                    outputs:
+                      type: string
+                    paper_step_mapping:
+                      type: string
+                    purpose:
+                      type: string
+                  required:
+                  - name
+                  - purpose
+                  - inputs
+                  - outputs
+                  - paper_step_mapping
+                  type: object
+                type: array
+              goal:
+                type: string
+              inputs:
+                additionalProperties:
+                  type: string
+                type: object
+              outputs:
+                additionalProperties:
+                  type: string
+                type: object
+              reference_libraries:
+                items:
+                  additionalProperties: false
+                  properties:
+                    name:
+                      type: string
+                    role:
+                      type: string
+                  required:
+                  - name
+                  - role
+                  type: object
+                type: array
+              required_tests:
+                items:
+                  additionalProperties: false
+                  properties:
+                    expected_property:
+                      type: string
+                    name:
+                      type: string
+                    purpose:
+                      type: string
+                  required:
+                  - name
+                  - purpose
+                  - expected_property
+                  type: object
+                type: array
+              research_context:
+                type: string
+              symbols:
+                additionalProperties:
+                  type: string
+                type: object
+              task_type:
+                type: string
+            required:
+            - algorithm_name
+            - research_context
+            - task_type
+            - goal
+            - inputs
+            - outputs
+            - symbols
+            - core_equations
+            - core_steps
+            - functions
+            - engineering_assumptions
+            - ambiguity_notes
+            - reference_libraries
+            - required_tests
+            - demo_scope
+            type: object
+        structured_output_enabled: true
+        title: Algorithm Spec Extractor
+        type: llm
+        vision:
+          enabled: false
+      height: 88
+      id: '1776041314313'
+      position:
+        x: 475
+        y: 340.687803724906
+      positionAbsolute:
+        x: 475
+        y: 340.687803724906
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        code: "import json\n\ndef main(spec_json, paper_excerpt: str, equations: str,\
+          \ constraints: str, task_name: str):\n    spec = spec_json if isinstance(spec_json,\
+          \ dict) else {}\n    equations_list = [line.strip() for line in equations.splitlines()\
+          \ if line.strip()]\n    constraints_list = [line.strip() for line in constraints.splitlines()\
+          \ if line.strip()]\n    project_name = (str(task_name).strip() if task_name\
+          \ is not None else \"\") or spec.get(\"algorithm_name\", \"guardalign_op\"\
+          )\n\n    codex_instruction = f\"\"\"\nYou are implementing an AI research\
+          \ algorithm from a structured specification.\n\nGenerate a minimal runnable\
+          \ Python project.\n\nProject requirements:\n- Use PyTorch.\n- Run on CPU.\n\
+          - Do not download external models or datasets.\n- Use synthetic embeddings\
+          \ for tests.\n- Include pytest tests.\n- Include a toy example.\n- Include\
+          \ implementation_report.md.\n- Do not claim to replace POT or GeomLoss.\n\
+          - Treat POT/GeomLoss only as optional reference oracles.\n- Default tests\
+          \ must not require POT, GeomLoss, CLIP, GPU, or internet.\n- For files under\
+          \ examples/, do not use invalid filesystem-style imports such as `from ../src.xxx`.\n\
+          - Example scripts must be runnable from the project root. Use pathlib +\
+          \ sys.path insertion if needed.\n\nRequired project files:\n- algorithm_spec.json\n\
+          - src/__init__.py\n- src/guardalign_op.py\n- tests/test_guardalign_op.py\n\
+          - examples/run_toy_guardalign_op.py\n- implementation_report.md\n- README.md\n\
+          \nDo NOT generate extra optional comparison files by default.\nDo NOT generate\
+          \ tests/test_cosine_vs_op.py unless explicitly requested by the user in\
+          \ a later manual step.\nDo NOT generate examples/compare_cosine_vs_op.py\
+          \ unless explicitly requested by the user in a later manual step.\n\nCore\
+          \ functions expected for GuardAlign-style OP:\n- compute_cost_matrix(image_embeds,\
+          \ text_embeds, eps=1e-8)\n- sinkhorn_transport(cost_matrix, epsilon=0.05,\
+          \ num_iters=100, tol=1e-6)\n- compute_patch_scores(transport_plan, cost_matrix)\n\
+          - guardalign_op_score(image_embeds, text_embeds, epsilon=0.05, num_iters=100)\n\
+          \nCore OP testing requirements:\n- import test\n- cost matrix shape test\n\
+          - cost matrix finite value test\n- transport plan non-negative test\n- row/column\
+          \ marginal constraint test\n- identity matching toy case\n- permutation\
+          \ matching toy case\n- patch score shape test\n- end-to-end output keys\
+          \ test\n- invalid feature dimension test\n\nReturn valid JSON only:\n{{\n\
+          \  \"project_name\": \"{project_name}\",\n  \"files\": {{\n    \"algorithm_spec.json\"\
+          : \"...\",\n    \"src/__init__.py\": \"...\",\n    \"src/guardalign_op.py\"\
+          : \"...\",\n    \"tests/test_guardalign_op.py\": \"...\",\n    \"examples/run_toy_guardalign_op.py\"\
+          : \"...\",\n    \"implementation_report.md\": \"...\",\n    \"README.md\"\
+          : \"...\"\n  }},\n  \"summary\": \"...\",\n  \"assumptions\": [\"...\"]\n\
+          }}\n\nalgorithm_spec.json:\n{json.dumps(spec, ensure_ascii=False, indent=2)}\n\
+          \"\"\"\n\n    payload = {\n        \"task_name\": str(task_name) if task_name\
+          \ is not None else \"\",\n        \"project_name\": project_name,\n    \
+          \    \"algorithm_spec\": spec,\n        \"paper_excerpt\": paper_excerpt,\n\
+          \        \"equations\": equations_list or spec.get(\"core_equations\", []),\n\
+          \        \"constraints\": constraints_list or spec.get(\"engineering_assumptions\"\
+          , []),\n        \"codex_instruction\": codex_instruction,\n    }\n    return\
+          \ {\n        \"task_name\": str(task_name) if task_name is not None else\
+          \ \"\",\n        \"project_name\": project_name,\n        \"paper_excerpt\"\
+          : paper_excerpt,\n        \"equations_list\": payload[\"equations\"],\n\
+          \        \"constraints_list\": payload[\"constraints\"],\n        \"spec_goal\"\
+          : spec.get(\"goal\", \"\"),\n        \"algorithm_spec_json\": json.dumps(spec,\
+          \ ensure_ascii=False),\n        \"request_body\": json.dumps(payload, ensure_ascii=False),\n\
+          \    }\n"
+        code_language: python3
+        outputs:
+          algorithm_spec_json:
+            children: null
+            type: string
+          constraints_list:
+            children: null
+            type: array[string]
+          equations_list:
+            children: null
+            type: array[string]
+          paper_excerpt:
+            children: null
+            type: string
+          project_name:
+            children: null
+            type: string
+          request_body:
+            children: null
+            type: string
+          spec_goal:
+            children: null
+            type: string
+          task_name:
+            children: null
+            type: string
+        selected: false
+        title: Build Generate Project Request
+        type: code
+        variables:
+        - value_selector:
+          - '1776041314313'
+          - structured_output
+          value_type: object
+          variable: spec_json
+        - value_selector:
+          - '1775985079626'
+          - paper_excerpt
+          value_type: string
+          variable: paper_excerpt
+        - value_selector:
+          - '1775985079626'
+          - equations
+          value_type: string
+          variable: equations
+        - value_selector:
+          - '1775985079626'
+          - constraints
+          value_type: string
+          variable: constraints
+        - value_selector:
+          - '1775985079626'
+          - task_name
+          value_type: string
+          variable: task_name
+      height: 52
+      id: '1776042316796'
+      position:
+        x: 863.0440532981359
+        y: 326.949100589067
+      positionAbsolute:
+        x: 863.0440532981359
+        y: 326.949100589067
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        authorization:
+          config: null
+          type: no-auth
+        body:
+          data:
+          - id: key-value-generate-project
+            key: ''
+            type: text
+            value: '{{#1776042316796.request_body#}}'
+          type: raw-text
+        headers: Content-Type:application/json
+        method: post
+        params: ''
+        retry_config:
+          max_retries: 1
+          retry_enabled: false
+          retry_interval: 100
+        selected: false
+        ssl_verify: false
+        timeout:
+          max_connect_timeout: 0
+          max_read_timeout: 0
+          max_write_timeout: 0
+        title: Generate Project
+        type: http-request
+        url: http://host.docker.internal:8787/generate_project
+        variables: []
+      height: 108
+      id: '1776042681090'
+      position:
+        x: 1007.7700972063958
+        y: 488.89654933985696
+      positionAbsolute:
+        x: 1007.7700972063958
+        y: 488.89654933985696
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        outputs:
+        - value_selector:
+          - '1776047777000'
+          - summary
+          value_type: string
+          variable: summary
+        - value_selector:
+          - '1776047777000'
+          - structured_run_card
+          value_type: string
+          variable: structured_run_card
+        - value_selector:
+          - '1776047777000'
+          - project_name
+          value_type: string
+          variable: project_name
+        - value_selector:
+          - '1776047777000'
+          - project_dir
+          value_type: string
+          variable: project_dir
+        - value_selector:
+          - '1776047777000'
+          - algorithm_file
+          value_type: string
+          variable: algorithm_file
+        - value_selector:
+          - '1776047777000'
+          - main_test_file
+          value_type: string
+          variable: main_test_file
+        - value_selector:
+          - '1776047777000'
+          - example_file
+          value_type: string
+          variable: example_file
+        - value_selector:
+          - '1776047777000'
+          - implementation_report
+          value_type: string
+          variable: implementation_report
+        - value_selector:
+          - '1776047777000'
+          - readme
+          value_type: string
+          variable: readme
+        - value_selector:
+          - '1776047777000'
+          - run_all_tests_command
+          value_type: string
+          variable: run_all_tests_command
+        - value_selector:
+          - '1776047777000'
+          - run_main_test_command
+          value_type: string
+          variable: run_main_test_command
+        - value_selector:
+          - '1776047777000'
+          - run_example_command
+          value_type: string
+          variable: run_example_command
+        - value_selector:
+          - '1776047777000'
+          - round0_test_status
+          value_type: string
+          variable: round0_test_status
+        - value_selector:
+          - '1776047777000'
+          - repair_status
+          value_type: string
+          variable: repair_status
+        - value_selector:
+          - '1776047777000'
+          - repair_rounds_used
+          value_type: string
+          variable: repair_rounds_used
+        - value_selector:
+          - '1776047777000'
+          - repair_final_internal_status
+          value_type: string
+          variable: repair_final_internal_status
+        - value_selector:
+          - '1776047777000'
+          - round1_test_status
+          value_type: string
+          variable: round1_test_status
+        - value_selector:
+          - '1776044453723'
+          - files_json
+          value_type: string
+          variable: generated_files_json
+        - value_selector:
+          - '2000000000005'
+          - pytest_result_json
+          value_type: string
+          variable: pytest_result_round0
+        - value_selector:
+          - '2000000000011'
+          - pytest_result_json
+          value_type: string
+          variable: pytest_result_round1
+        - value_selector:
+          - '2000000000008'
+          - repair_history_json
+          value_type: string
+          variable: repair_history_json
+        - value_selector:
+          - '2000000000008'
+          - modified_files_json
+          value_type: string
+          variable: modified_files_json
+        selected: false
+        title: 输出 / Final Outputs
+        type: end
+      height: 634
+      id: '1776043507563'
+      position:
+        x: 92.79300877442137
+        y: 775.8385266368867
+      positionAbsolute:
+        x: 92.79300877442137
+        y: 775.8385266368867
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        code: "import json\n\ndef main(body: str, status_code: int, fallback_project_name:\
+          \ str = \"\") -> dict:\n    fallback_project_name = (fallback_project_name\
+          \ or \"guardalign_op\").strip() or \"guardalign_op\"\n\n    if status_code\
+          \ != 200:\n        return {\n            \"ok\": False,\n            \"\
+          project_name\": fallback_project_name,\n            \"files_json\": \"{}\"\
+          ,\n            \"summary\": \"\",\n            \"stderr\": f\"HTTP request\
+          \ failed with status {status_code}\",\n            \"file_count\": 0,\n\
+          \        }\n\n    try:\n        data = json.loads(body)\n    except Exception\
+          \ as e:\n        return {\n            \"ok\": False,\n            \"project_name\"\
+          : fallback_project_name,\n            \"files_json\": \"{}\",\n        \
+          \    \"summary\": \"\",\n            \"stderr\": f\"Failed to parse JSON\
+          \ body: {e}\",\n            \"file_count\": 0,\n        }\n\n    files =\
+          \ data.get(\"files\", {})\n    if not isinstance(files, dict):\n       \
+          \ files = {}\n\n    project_name = (data.get(\"project_name\") or fallback_project_name\
+          \ or \"guardalign_op\").strip()\n\n    return {\n        \"ok\": bool(project_name\
+          \ and files),\n        \"project_name\": project_name,\n        \"files_json\"\
+          : json.dumps(files, ensure_ascii=False),\n        \"summary\": data.get(\"\
+          summary\", \"\"),\n        \"stderr\": data.get(\"stderr\", data.get(\"\
+          error\", \"\")),\n        \"file_count\": len(files),\n    }\n"
+        code_language: python3
+        outputs:
+          file_count:
+            children: null
+            type: number
+          files_json:
+            children: null
+            type: string
+          ok:
+            children: null
+            type: boolean
+          project_name:
+            children: null
+            type: string
+          stderr:
+            children: null
+            type: string
+          summary:
+            children: null
+            type: string
+        selected: false
+        title: Parse Generated Project
+        type: code
+        variables:
+        - value_selector:
+          - '1776042681090'
+          - body
+          value_type: string
+          variable: body
+        - value_selector:
+          - '1776042681090'
+          - status_code
+          value_type: number
+          variable: status_code
+        - value_selector:
+          - '1776042316796'
+          - project_name
+          value_type: string
+          variable: fallback_project_name
+      height: 52
+      id: '1776044453723'
+      position:
+        x: 78.89090851369355
+        y: 587.5246324518671
+      positionAbsolute:
+        x: 78.89090851369355
+        y: 587.5246324518671
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        code: "import json\n\ndef _s(x):\n    if x is None:\n        return \"\"\n\
+          \    return str(x)\n\ndef _clip(text, n=1200):\n    text = _s(text).strip()\n\
+          \    if len(text) <= n:\n        return text\n    return text[:n] + \"\\\
+          n...<truncated>\"\n\ndef _json_pretty(text):\n    try:\n        return json.dumps(json.loads(text),\
+          \ ensure_ascii=False, indent=2)\n    except Exception:\n        return _s(text)\n\
+          \ndef main(\n    project_name: str = \"\",\n    task_name: str = \"\",\n\
+          \    generation_summary: str = \"\",\n    generation_stderr: str = \"\"\
+          ,\n    max_repair_rounds = 0,\n    round0_status: str = \"\",\n    round0_pytest_stdout:\
+          \ str = \"\",\n    round0_pytest_stderr: str = \"\",\n    round0_example_stdout:\
+          \ str = \"\",\n    round0_example_stderr: str = \"\",\n    repair_status:\
+          \ str = \"\",\n    repair_rounds_used = 0,\n    repair_final_internal_status:\
+          \ str = \"\",\n    repair_root_cause: str = \"\",\n    repair_summary: str\
+          \ = \"\",\n    modified_files_json: str = \"\",\n    repair_history_json:\
+          \ str = \"\",\n    round1_status: str = \"\",\n    round1_pytest_stdout:\
+          \ str = \"\",\n    round1_pytest_stderr: str = \"\",\n    round1_example_stdout:\
+          \ str = \"\",\n    round1_example_stderr: str = \"\",\n):\n    project_name\
+          \ = (project_name or task_name or \"guardalign_op\").strip() or \"guardalign_op\"\
+          \n    project_dir = f\"outputs/{project_name}\"\n    algorithm_file = f\"\
+          {project_dir}/src/guardalign_op.py\"\n    main_test_file = f\"{project_dir}/tests/test_guardalign_op.py\"\
+          \n    example_file = f\"{project_dir}/examples/run_toy_guardalign_op.py\"\
+          \n    implementation_report = f\"{project_dir}/implementation_report.md\"\
+          \n    readme = f\"{project_dir}/README.md\"\n\n    run_all_tests_command\
+          \ = f\"cd {project_dir} && PYTHONPATH=. python -m pytest tests -q --tb=short\"\
+          \n    run_main_test_command = f\"cd {project_dir} && PYTHONPATH=. python\
+          \ -m pytest tests/test_guardalign_op.py -q --tb=short\"\n    run_example_command\
+          \ = f\"cd {project_dir} && PYTHONPATH=. python examples/run_toy_guardalign_op.py\"\
+          \n\n    structured_run_card = f'''project_name: \"{project_name}\"\nproject_dir:\
+          \ \"{project_dir}\"\nalgorithm_file: \"{algorithm_file}\"\nmain_test_file:\
+          \ \"{main_test_file}\"\nexample_file: \"{example_file}\"\nimplementation_report:\
+          \ \"{implementation_report}\"\nreadme: \"{readme}\"\nrun_all_tests_command:\
+          \ \"{run_all_tests_command}\"\nrun_main_test_command: \"{run_main_test_command}\"\
+          \nrun_example_command: \"{run_example_command}\"\nround0_test_status: \"\
+          {_s(round0_status)}\"\nrepair_status: \"{_s(repair_status)}\"\nrepair_rounds_used:\
+          \ \"{_s(repair_rounds_used)}\"\nrepair_final_internal_status: \"{_s(repair_final_internal_status)}\"\
+          \nround1_test_status: \"{_s(round1_status)}\"'''\n\n    summary = f'''#\
+          \ 生成—测试—修复结构化报告\n\n## 0. 结构化运行卡片\n\n```yaml\n{structured_run_card}\n```\n\
+          \n## 1. 关键文件路径\n\n- 算法实现文件: `{algorithm_file}`\n- 主测试文件: `{main_test_file}`\n\
+          - Toy 示例脚本: `{example_file}`\n- 实现报告: `{implementation_report}`\n- README:\
+          \ `{readme}`\n\n## 2. 可直接复制执行的命令\n\n运行全部测试：\n\n```bash\n{run_all_tests_command}\n\
+          ```\n\n只运行主测试文件：\n\n```bash\n{run_main_test_command}\n```\n\n运行 toy example：\n\
+          \n```bash\n{run_example_command}\n```\n\n## 3. 测试与修复状态\n\n- Round 0 测试状态:\
+          \ `{_s(round0_status)}`\n- 请求的最大修复轮数: `{_s(max_repair_rounds)}`\n- Repair\
+          \ 状态: `{_s(repair_status)}`\n- Repair 实际使用轮数: `{_s(repair_rounds_used)}`\n\
+          - Repair 内部最终测试状态: `{_s(repair_final_internal_status)}`\n- Round 1 最终测试状态:\
+          \ `{_s(round1_status)}`\n- Repair root cause: `{_s(repair_root_cause) or\
+          \ \"无 / 未触发\"}`\n- Repair summary: `{_s(repair_summary) or \"无 / 未触发\"}`\n\
+          \n### Round 0 pytest stdout\n\n```text\n{_clip(round0_pytest_stdout)}\n\
+          ```\n\n### Round 0 pytest stderr\n\n```text\n{_clip(round0_pytest_stderr)}\n\
+          ```\n\n### Round 1 pytest stdout\n\n```text\n{_clip(round1_pytest_stdout)}\n\
+          ```\n\n### Round 1 pytest stderr\n\n```text\n{_clip(round1_pytest_stderr)}\n\
+          ```\n\n## 4. Toy 示例输出摘要\n\n### Round 1 example stdout\n\n```text\n{_clip(round1_example_stdout)}\n\
+          ```\n\n### Round 1 example stderr\n\n```text\n{_clip(round1_example_stderr)}\n\
+          ```\n\n## 5. 当前代码实现了什么\n\n- `C(m,n)=1-cos(x_m,z_n)` 的 cosine-distance cost\
+          \ matrix。\n- 基于 Sinkhorn 的 entropic optimal transport plan。\n- `patch_score(m)=sum_n\
+          \ T(m,n)*C(m,n)` 的 patch-level transport-weighted distance score。\n- 对 patch\
+          \ scores 做 mean 得到 toy-level global score。\n\n## 6. 当前验证到了什么\n\n- 代码可以被\
+          \ import。\n- cost matrix、transport plan、patch scores 的 shape 被测试覆盖。\n- transport\
+          \ plan 的非负性与 row/column marginal constraints 被测试覆盖。\n- identity / permutation\
+          \ toy case 被测试覆盖。\n- toy example 可运行。\n\n## 7. 当前还没有验证什么\n\n- 没有验证真实 CLIP/VLM\
+          \ embedding。\n- 没有默认对比 POT / GeomLoss reference oracle。\n- 没有复现 GuardAlign\
+          \ 原论文完整实验结果。\n- 当前只能说明 toy-level mathematical behavior，不代表真实任务有效性。\n\n##\
+          \ 8. Repair history / modified files\n\nModified files:\n\n```json\n{_json_pretty(modified_files_json)}\n\
+          ```\n\nRepair history:\n\n```json\n{_json_pretty(repair_history_json)}\n\
+          ```\n'''\n\n    return {\n        \"summary\": summary,\n        \"structured_run_card\"\
+          : structured_run_card,\n        \"project_name\": project_name,\n      \
+          \  \"project_dir\": project_dir,\n        \"algorithm_file\": algorithm_file,\n\
+          \        \"main_test_file\": main_test_file,\n        \"example_file\":\
+          \ example_file,\n        \"implementation_report\": implementation_report,\n\
+          \        \"readme\": readme,\n        \"run_all_tests_command\": run_all_tests_command,\n\
+          \        \"run_main_test_command\": run_main_test_command,\n        \"run_example_command\"\
+          : run_example_command,\n        \"round0_test_status\": _s(round0_status),\n\
+          \        \"repair_status\": _s(repair_status),\n        \"repair_rounds_used\"\
+          : _s(repair_rounds_used),\n        \"repair_final_internal_status\": _s(repair_final_internal_status),\n\
+          \        \"round1_test_status\": _s(round1_status),\n    }\n"
+        code_language: python3
+        outputs:
+          algorithm_file:
+            children: null
+            type: string
+          example_file:
+            children: null
+            type: string
+          implementation_report:
+            children: null
+            type: string
+          main_test_file:
+            children: null
+            type: string
+          project_dir:
+            children: null
+            type: string
+          project_name:
+            children: null
+            type: string
+          readme:
+            children: null
+            type: string
+          repair_final_internal_status:
+            children: null
+            type: string
+          repair_rounds_used:
+            children: null
+            type: string
+          repair_status:
+            children: null
+            type: string
+          round0_test_status:
+            children: null
+            type: string
+          round1_test_status:
+            children: null
+            type: string
+          run_all_tests_command:
+            children: null
+            type: string
+          run_example_command:
+            children: null
+            type: string
+          run_main_test_command:
+            children: null
+            type: string
+          structured_run_card:
+            children: null
+            type: string
+          summary:
+            children: null
+            type: string
+        selected: false
+        title: Build Structured Final Outputs
+        type: code
+        variables:
+        - value_selector:
+          - '1776044453723'
+          - project_name
+          value_type: string
+          variable: project_name
+        - value_selector:
+          - '1776042316796'
+          - task_name
+          value_type: string
+          variable: task_name
+        - value_selector:
+          - '1776044453723'
+          - summary
+          value_type: string
+          variable: generation_summary
+        - value_selector:
+          - '1776044453723'
+          - stderr
+          value_type: string
+          variable: generation_stderr
+        - value_selector:
+          - '2000000000006'
+          - max_repair_rounds
+          value_type: number
+          variable: max_repair_rounds
+        - value_selector:
+          - '2000000000005'
+          - test_status
+          value_type: string
+          variable: round0_status
+        - value_selector:
+          - '2000000000005'
+          - pytest_stdout
+          value_type: string
+          variable: round0_pytest_stdout
+        - value_selector:
+          - '2000000000005'
+          - pytest_stderr
+          value_type: string
+          variable: round0_pytest_stderr
+        - value_selector:
+          - '2000000000005'
+          - example_stdout
+          value_type: string
+          variable: round0_example_stdout
+        - value_selector:
+          - '2000000000005'
+          - example_stderr
+          value_type: string
+          variable: round0_example_stderr
+        - value_selector:
+          - '2000000000008'
+          - repair_status
+          value_type: string
+          variable: repair_status
+        - value_selector:
+          - '2000000000008'
+          - rounds_used
+          value_type: number
+          variable: repair_rounds_used
+        - value_selector:
+          - '2000000000008'
+          - final_test_status
+          value_type: string
+          variable: repair_final_internal_status
+        - value_selector:
+          - '2000000000008'
+          - root_cause
+          value_type: string
+          variable: repair_root_cause
+        - value_selector:
+          - '2000000000008'
+          - repair_summary
+          value_type: string
+          variable: repair_summary
+        - value_selector:
+          - '2000000000008'
+          - modified_files_json
+          value_type: string
+          variable: modified_files_json
+        - value_selector:
+          - '2000000000008'
+          - repair_history_json
+          value_type: string
+          variable: repair_history_json
+        - value_selector:
+          - '2000000000011'
+          - test_status
+          value_type: string
+          variable: round1_status
+        - value_selector:
+          - '2000000000011'
+          - pytest_stdout
+          value_type: string
+          variable: round1_pytest_stdout
+        - value_selector:
+          - '2000000000011'
+          - pytest_stderr
+          value_type: string
+          variable: round1_pytest_stderr
+        - value_selector:
+          - '2000000000011'
+          - example_stdout
+          value_type: string
+          variable: round1_example_stdout
+        - value_selector:
+          - '2000000000011'
+          - example_stderr
+          value_type: string
+          variable: round1_example_stderr
+      height: 52
+      id: '1776047777000'
+      position:
+        x: 1260
+        y: 520
+      positionAbsolute:
+        x: 1260
+        y: 520
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        authorization:
+          config: null
+          type: no-auth
+        body:
+          data: []
+          type: none
+        headers: ''
+        method: get
+        params: ''
+        retry_config:
+          max_retries: 3
+          retry_enabled: true
+          retry_interval: 100
+        selected: false
+        ssl_verify: false
+        timeout:
+          max_connect_timeout: 0
+          max_read_timeout: 0
+          max_write_timeout: 0
+        title: Bridge Health Check (optional)
+        type: http-request
+        url: http://host.docker.internal:8787/health
+        variables: []
+      height: 137
+      id: '1776080966726'
+      position:
+        x: 863.0440532981359
+        y: 758.7340323213472
+      positionAbsolute:
+        x: 863.0440532981359
+        y: 758.7340323213472
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        code: "import json\n\ndef main(project_name: str, files_json: str):\n    project_name\
+          \ = (project_name or \"guardalign_op\").strip() or \"guardalign_op\"\n\n\
+          \    try:\n        files = json.loads(files_json)\n    except Exception:\n\
+          \        files = {}\n\n    if not isinstance(files, dict):\n        files\
+          \ = {}\n\n    payload = {\"project_name\": project_name, \"files\": files}\n\
+          \    return {\n        \"project_name\": project_name,\n        \"file_count\"\
+          : len(files),\n        \"request_body\": json.dumps(payload, ensure_ascii=False),\n\
+          \    }\n"
+        code_language: python3
+        outputs:
+          file_count:
+            children: null
+            type: number
+          project_name:
+            children: null
+            type: string
+          request_body:
+            children: null
+            type: string
+        selected: false
+        title: Build Save Project Request
+        type: code
+        variables:
+        - value_selector:
+          - '1776044453723'
+          - project_name
+          value_type: string
+          variable: project_name
+        - value_selector:
+          - '1776044453723'
+          - files_json
+          value_type: string
+          variable: files_json
+      height: 52
+      id: '2000000000001'
+      position:
+        x: 1230
+        y: 330
+      positionAbsolute:
+        x: 1230
+        y: 330
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        authorization:
+          config: null
+          type: no-auth
+        body:
+          data:
+          - id: key-value-2000000000002
+            key: ''
+            type: text
+            value: '{{#2000000000001.request_body#}}'
+          type: raw-text
+        headers: Content-Type:application/json
+        method: post
+        params: ''
+        retry_config:
+          max_retries: 1
+          retry_enabled: false
+          retry_interval: 100
+        selected: false
+        ssl_verify: false
+        timeout:
+          max_connect_timeout: 0
+          max_read_timeout: 0
+          max_write_timeout: 0
+        title: Save Project
+        type: http-request
+        url: http://host.docker.internal:8787/save_project
+        variables: []
+      height: 108
+      id: '2000000000002'
+      position:
+        x: 1550
+        y: 330
+      positionAbsolute:
+        x: 1550
+        y: 330
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        code: "import json\n\ndef main(project_name: str):\n    project_name = (project_name\
+          \ or \"guardalign_op\").strip() or \"guardalign_op\"\n    return {\n   \
+          \     \"project_name\": project_name,\n        \"request_body\": json.dumps({\"\
+          project_name\": project_name}, ensure_ascii=False),\n    }\n"
+        code_language: python3
+        outputs:
+          project_name:
+            children: null
+            type: string
+          request_body:
+            children: null
+            type: string
+        selected: false
+        title: Build Run Tests Request R0
+        type: code
+        variables:
+        - value_selector:
+          - '1776044453723'
+          - project_name
+          value_type: string
+          variable: project_name
+      height: 52
+      id: '2000000000003'
+      position:
+        x: 1870
+        y: 330
+      positionAbsolute:
+        x: 1870
+        y: 330
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        authorization:
+          config: null
+          type: no-auth
+        body:
+          data:
+          - id: key-value-2000000000004
+            key: ''
+            type: text
+            value: '{{#2000000000003.request_body#}}'
+          type: raw-text
+        headers: Content-Type:application/json
+        method: post
+        params: ''
+        retry_config:
+          max_retries: 1
+          retry_enabled: false
+          retry_interval: 100
+        selected: false
+        ssl_verify: false
+        timeout:
+          max_connect_timeout: 0
+          max_read_timeout: 0
+          max_write_timeout: 0
+        title: Run Tests R0
+        type: http-request
+        url: http://host.docker.internal:8787/run_tests
+        variables: []
+      height: 108
+      id: '2000000000004'
+      position:
+        x: 2190
+        y: 330
+      positionAbsolute:
+        x: 2190
+        y: 330
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        code: "import json\n\ndef main(body: str, status_code: int):\n    if status_code\
+          \ != 200:\n        data = {\"status\": \"error\", \"message\": f\"HTTP request\
+          \ failed with status {status_code}\"}\n        return {\"test_status\":\
+          \ \"error\", \"pytest_stdout\": \"\", \"pytest_stderr\": data[\"message\"\
+          ], \"example_stdout\": \"\", \"example_stderr\": \"\", \"pytest_result_json\"\
+          : json.dumps(data, ensure_ascii=False)}\n    try:\n        data = json.loads(body)\n\
+          \    except Exception as e:\n        data = {\"status\": \"error\", \"message\"\
+          : f\"Failed to parse JSON body: {e}\"}\n    pytest = data.get(\"pytest\"\
+          , {})\n    example = data.get(\"example\", {})\n    return {\"test_status\"\
+          : data.get(\"status\", \"unknown\"), \"pytest_stdout\": pytest.get(\"stdout\"\
+          , \"\"), \"pytest_stderr\": pytest.get(\"stderr\", \"\"), \"example_stdout\"\
+          : example.get(\"stdout\", \"\"), \"example_stderr\": example.get(\"stderr\"\
+          , \"\"), \"pytest_result_json\": json.dumps(data, ensure_ascii=False)}\n"
+        code_language: python3
+        outputs:
+          example_stderr:
+            children: null
+            type: string
+          example_stdout:
+            children: null
+            type: string
+          pytest_result_json:
+            children: null
+            type: string
+          pytest_stderr:
+            children: null
+            type: string
+          pytest_stdout:
+            children: null
+            type: string
+          test_status:
+            children: null
+            type: string
+        selected: false
+        title: Parse Test Result R0
+        type: code
+        variables:
+        - value_selector:
+          - '2000000000004'
+          - body
+          value_type: string
+          variable: body
+        - value_selector:
+          - '2000000000004'
+          - status_code
+          value_type: number
+          variable: status_code
+      height: 52
+      id: '2000000000005'
+      position:
+        x: 2510
+        y: 330
+      positionAbsolute:
+        x: 2510
+        y: 330
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        code: "import json\n\ndef _to_int(value, default=1):\n    try:\n        n\
+          \ = int(str(value).strip())\n        return max(0, n)\n    except Exception:\n\
+          \        return default\n\ndef main(project_name: str, algorithm_spec_json:\
+          \ str, pytest_result_json: str, repair_rounds: str):\n    project_name =\
+          \ (project_name or \"guardalign_op\").strip() or \"guardalign_op\"\n   \
+          \ try:\n        algorithm_spec = json.loads(algorithm_spec_json)\n    except\
+          \ Exception:\n        algorithm_spec = {}\n\n    try:\n        pytest_result\
+          \ = json.loads(pytest_result_json)\n    except Exception:\n        pytest_result\
+          \ = {}\n\n    max_repair_rounds = _to_int(repair_rounds, default=1)\n\n\
+          \    payload = {\n        \"project_name\": project_name,\n        \"algorithm_spec\"\
+          : algorithm_spec,\n        \"pytest_result\": pytest_result,\n        \"\
+          max_repair_rounds\": max_repair_rounds,\n        \"max_repair_round\": max_repair_rounds\n\
+          \    }\n\n    return {\n        \"max_repair_rounds\": max_repair_rounds,\n\
+          \        \"request_body\": json.dumps(payload, ensure_ascii=False)\n   \
+          \ }\n"
+        code_language: python3
+        outputs:
+          max_repair_rounds:
+            children: null
+            type: number
+          request_body:
+            children: null
+            type: string
+        selected: false
+        title: Build N-round Repair Request
+        type: code
+        variables:
+        - value_selector:
+          - '1776044453723'
+          - project_name
+          value_type: string
+          variable: project_name
+        - value_selector:
+          - '1776042316796'
+          - algorithm_spec_json
+          value_type: string
+          variable: algorithm_spec_json
+        - value_selector:
+          - '2000000000005'
+          - pytest_result_json
+          value_type: string
+          variable: pytest_result_json
+        - value_selector:
+          - '1775985079626'
+          - repair_rounds
+          value_type: string
+          variable: repair_rounds
+      height: 52
+      id: '2000000000006'
+      position:
+        x: 2830
+        y: 330
+      positionAbsolute:
+        x: 2830
+        y: 330
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        authorization:
+          config: null
+          type: no-auth
+        body:
+          data:
+          - id: key-value-2000000000007
+            key: ''
+            type: text
+            value: '{{#2000000000006.request_body#}}'
+          type: raw-text
+        headers: Content-Type:application/json
+        method: post
+        params: ''
+        retry_config:
+          max_retries: 1
+          retry_enabled: false
+          retry_interval: 100
+        selected: false
+        ssl_verify: false
+        timeout:
+          max_connect_timeout: 0
+          max_read_timeout: 0
+          max_write_timeout: 0
+        title: Repair Until Pass (N rounds)
+        type: http-request
+        url: http://host.docker.internal:8787/repair_until_pass
+        variables: []
+      height: 108
+      id: '2000000000007'
+      position:
+        x: 3151.605715246762
+        y: 326.949100589067
+      positionAbsolute:
+        x: 3151.605715246762
+        y: 326.949100589067
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        code: "import json\n\ndef main(body: str, status_code: int):\n    if status_code\
+          \ != 200:\n        return {\n            \"repair_status\": \"error\",\n\
+          \            \"root_cause\": \"\",\n            \"repair_summary\": f\"\
+          HTTP request failed with status {status_code}\",\n            \"remaining_limitations_json\"\
+          : \"[]\",\n            \"modified_files_json\": \"[]\",\n            \"\
+          repair_history_json\": \"[]\",\n            \"rounds_used\": 0,\n      \
+          \      \"final_test_status\": \"unknown\"\n        }\n\n    try:\n     \
+          \   data = json.loads(body)\n    except Exception as e:\n        return\
+          \ {\n            \"repair_status\": \"error\",\n            \"root_cause\"\
+          : \"\",\n            \"repair_summary\": f\"Failed to parse JSON body: {e}\"\
+          ,\n            \"remaining_limitations_json\": \"[]\",\n            \"modified_files_json\"\
+          : \"[]\",\n            \"repair_history_json\": \"[]\",\n            \"\
+          rounds_used\": 0,\n            \"final_test_status\": \"unknown\"\n    \
+          \    }\n\n    # Compatible with both old /repair_project and new /repair_until_pass.\n\
+          \    history = data.get(\"history\", [])\n    modified_files = data.get(\"\
+          modified_files\", [])\n    if isinstance(modified_files, dict):\n      \
+          \  modified_files = list(modified_files.keys())\n\n    return {\n      \
+          \  \"repair_status\": data.get(\"status\", \"unknown\"),\n        \"root_cause\"\
+          : data.get(\"root_cause\", \"\"),\n        \"repair_summary\": data.get(\"\
+          repair_summary\", \"\"),\n        \"remaining_limitations_json\": json.dumps(data.get(\"\
+          remaining_limitations\", []), ensure_ascii=False),\n        \"modified_files_json\"\
+          : json.dumps(modified_files, ensure_ascii=False),\n        \"repair_history_json\"\
+          : json.dumps(history, ensure_ascii=False),\n        \"rounds_used\": data.get(\"\
+          rounds_used\", len(history) if isinstance(history, list) else 0),\n    \
+          \    \"final_test_status\": data.get(\"final_test_status\", \"unknown\"\
+          )\n    }\n"
+        code_language: python3
+        outputs:
+          final_test_status:
+            children: null
+            type: string
+          modified_files_json:
+            children: null
+            type: string
+          remaining_limitations_json:
+            children: null
+            type: string
+          repair_history_json:
+            children: null
+            type: string
+          repair_status:
+            children: null
+            type: string
+          repair_summary:
+            children: null
+            type: string
+          root_cause:
+            children: null
+            type: string
+          rounds_used:
+            children: null
+            type: number
+        selected: false
+        title: Parse N-round Repair Result
+        type: code
+        variables:
+        - value_selector:
+          - '2000000000007'
+          - body
+          value_type: string
+          variable: body
+        - value_selector:
+          - '2000000000007'
+          - status_code
+          value_type: number
+          variable: status_code
+      height: 52
+      id: '2000000000008'
+      position:
+        x: 3470
+        y: 330
+      positionAbsolute:
+        x: 3470
+        y: 330
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        code: "import json\n\ndef main(project_name: str):\n    project_name = (project_name\
+          \ or \"guardalign_op\").strip() or \"guardalign_op\"\n    return {\n   \
+          \     \"project_name\": project_name,\n        \"request_body\": json.dumps({\"\
+          project_name\": project_name}, ensure_ascii=False),\n    }\n"
+        code_language: python3
+        outputs:
+          project_name:
+            children: null
+            type: string
+          request_body:
+            children: null
+            type: string
+        selected: false
+        title: Build Run Tests Request R1
+        type: code
+        variables:
+        - value_selector:
+          - '1776044453723'
+          - project_name
+          value_type: string
+          variable: project_name
+      height: 52
+      id: '2000000000009'
+      position:
+        x: 3790
+        y: 330
+      positionAbsolute:
+        x: 3790
+        y: 330
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        authorization:
+          config: null
+          type: no-auth
+        body:
+          data:
+          - id: key-value-2000000000010
+            key: ''
+            type: text
+            value: '{{#2000000000009.request_body#}}'
+          type: raw-text
+        headers: Content-Type:application/json
+        method: post
+        params: ''
+        retry_config:
+          max_retries: 1
+          retry_enabled: false
+          retry_interval: 100
+        selected: false
+        ssl_verify: false
+        timeout:
+          max_connect_timeout: 0
+          max_read_timeout: 0
+          max_write_timeout: 0
+        title: Run Tests R1
+        type: http-request
+        url: http://host.docker.internal:8787/run_tests
+        variables: []
+      height: 108
+      id: '2000000000010'
+      position:
+        x: 4110
+        y: 330
+      positionAbsolute:
+        x: 4110
+        y: 330
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        code: "import json\n\ndef main(body: str, status_code: int):\n    if status_code\
+          \ != 200:\n        data = {\"status\": \"error\", \"message\": f\"HTTP request\
+          \ failed with status {status_code}\"}\n        return {\"test_status\":\
+          \ \"error\", \"pytest_stdout\": \"\", \"pytest_stderr\": data[\"message\"\
+          ], \"example_stdout\": \"\", \"example_stderr\": \"\", \"pytest_result_json\"\
+          : json.dumps(data, ensure_ascii=False)}\n    try:\n        data = json.loads(body)\n\
+          \    except Exception as e:\n        data = {\"status\": \"error\", \"message\"\
+          : f\"Failed to parse JSON body: {e}\"}\n    pytest = data.get(\"pytest\"\
+          , {})\n    example = data.get(\"example\", {})\n    return {\"test_status\"\
+          : data.get(\"status\", \"unknown\"), \"pytest_stdout\": pytest.get(\"stdout\"\
+          , \"\"), \"pytest_stderr\": pytest.get(\"stderr\", \"\"), \"example_stdout\"\
+          : example.get(\"stdout\", \"\"), \"example_stderr\": example.get(\"stderr\"\
+          , \"\"), \"pytest_result_json\": json.dumps(data, ensure_ascii=False)}\n"
+        code_language: python3
+        outputs:
+          example_stderr:
+            children: null
+            type: string
+          example_stdout:
+            children: null
+            type: string
+          pytest_result_json:
+            children: null
+            type: string
+          pytest_stderr:
+            children: null
+            type: string
+          pytest_stdout:
+            children: null
+            type: string
+          test_status:
+            children: null
+            type: string
+        selected: false
+        title: Parse Test Result R1
+        type: code
+        variables:
+        - value_selector:
+          - '2000000000010'
+          - body
+          value_type: string
+          variable: body
+        - value_selector:
+          - '2000000000010'
+          - status_code
+          value_type: number
+          variable: status_code
+      height: 52
+      id: '2000000000011'
+      position:
+        x: 4430
+        y: 330
+      positionAbsolute:
+        x: 4430
+        y: 330
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    viewport:
+      x: 1014.994905472109
+      y: -202.82568421898907
+      zoom: 0.587752420488266
+  rag_pipeline_variables: []
