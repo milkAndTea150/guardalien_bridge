@@ -15,19 +15,6 @@ from src.guardalign_ot import (
     sinkhorn_transport,
 )
 
-
-def save_matrix(matrix: torch.Tensor, title: str, output_path: Path) -> None:
-    plt.figure(figsize=(6, 5))
-    plt.imshow(matrix.detach().cpu().numpy(), aspect="auto", cmap="magma")
-    plt.title(title)
-    plt.xlabel("text index")
-    plt.ylabel("image patch index")
-    plt.colorbar()
-    plt.tight_layout()
-    plt.savefig(output_path, dpi=180)
-    plt.close()
-
-
 def save_overlay(image: Image.Image, patch_scores: torch.Tensor, grid_size: int, output_path: Path) -> None:
     image_np = np.array(image)
     heat = patch_scores.detach().cpu().numpy().reshape(grid_size, grid_size)
@@ -35,20 +22,22 @@ def save_overlay(image: Image.Image, patch_scores: torch.Tensor, grid_size: int,
     if heat.max() > 0:
         heat = heat / heat.max()
 
-    plt.figure(figsize=(8, 8))
-    plt.imshow(image_np)
-    plt.imshow(
+    fig, ax = plt.subplots(figsize=(8, 8))
+    ax.imshow(image_np)
+    overlay = ax.imshow(
         heat,
         cmap="jet",
         alpha=0.45,
         extent=(0, image_np.shape[1], image_np.shape[0], 0),
         interpolation="bilinear",
     )
-    plt.title("Patch score heatmap")
-    plt.axis("off")
-    plt.tight_layout()
-    plt.savefig(output_path, dpi=180)
-    plt.close()
+    ax.set_title("Sinkhorn Patch Score Heatmap")
+    ax.axis("off")
+    cbar = fig.colorbar(overlay, ax=ax, fraction=0.046, pad=0.04)
+    cbar.set_label("Normalized patch score")
+    fig.tight_layout()
+    fig.savefig(output_path, dpi=180)
+    plt.close(fig)
 
 
 def main() -> None:
@@ -75,19 +64,24 @@ def main() -> None:
     patch_scores = compute_patch_scores(plan, cost)
 
     args.output_dir.mkdir(parents=True, exist_ok=True)
-    save_matrix(cost, "Cost matrix", args.output_dir / "cost_matrix.png")
-    save_matrix(plan, "Transport plan", args.output_dir / "transport_plan.png")
-    save_overlay(image, patch_scores, grid_size, args.output_dir / "patch_scores_overlay.png")
+    output_path = args.output_dir / "patch_scores_heatmap.png"
+    save_overlay(image, patch_scores, grid_size, output_path)
+
+    topk = min(5, patch_scores.numel())
+    top_scores, top_indices = torch.topk(patch_scores, k=topk)
+    prompt_summary = " | ".join(args.text)
 
     print("device:", args.device)
     print("image_embeds shape:", tuple(image_embeds.shape))
     print("text_embeds shape:", tuple(text_embeds.shape))
     print("cost_matrix shape:", tuple(cost.shape))
     print("transport_plan shape:", tuple(plan.shape))
-    print("row sums:", plan.sum(dim=1).detach().cpu().tolist())
-    print("col sums:", plan.sum(dim=0).detach().cpu().tolist())
-    print("top patch scores:", torch.topk(patch_scores, k=min(5, patch_scores.numel())).values.tolist())
-    print("saved to:", args.output_dir)
+    print("texts:", prompt_summary)
+    print("epsilon:", args.epsilon)
+    print("num_iters:", args.num_iters)
+    print("top patch indices:", top_indices.tolist())
+    print("top patch scores:", top_scores.tolist())
+    print("saved to:", output_path)
 
 
 if __name__ == "__main__":
