@@ -1,9 +1,0 @@
-Reconstructed placeholder.
-
-The original `debug_codex_workspace/codex_stderr.txt` was deleted by `rm -rf` while it was still an untracked local debug artifact, so its exact contents are no longer recoverable from Git.
-
-This directory has been restored in structure only, using remaining local artifacts:
-- `prompt.txt` rebuilt from `tmp/generate_payload.json`
-- `codex_stdout.txt` rebuilt from `tmp/generated_project.json`
-
-If you need the exact original stderr log again, the only reliable way is to rerun the Codex workflow so `codex_client.py` writes a fresh `codex_stderr.txt`.
