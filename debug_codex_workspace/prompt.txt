@@ -1,0 +1,1 @@
+Return ONLY valid JSON. No markdown. No explanation. The JSON must be exactly: {"project_name":"codex_json_smoke_test","files":{"README.md":"# json smoke test\n"},"summary":"ok","assumptions":[]}

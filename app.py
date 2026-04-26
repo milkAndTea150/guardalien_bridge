@@ -1,4 +1,3 @@
-
 import json
 import os
 import subprocess
@@ -14,6 +13,132 @@ from codex_client import call_codex_json
 app = FastAPI(title="GuardAlien Research Code Bridge", version="0.1.0")
 
 BASE_DIR = Path(os.getenv("GUARDALIEN_OUTPUT_DIR", "./outputs")).resolve()
+
+
+class RepairProjectRequest(BaseModel):
+    project_name: str
+    algorithm_spec: Dict[str, Any] = Field(default_factory=dict)
+    pytest_result: Dict[str, Any] = Field(default_factory=dict)
+    max_repair_round: int = 1
+    max_repair_rounds: int = 1
+
+
+def build_repair_prompt(req: RepairProjectRequest, project_files: dict) -> str:
+    return f"""
+You are repairing a generated AI research algorithm implementation.
+
+The project failed its tests.
+
+Your task:
+1. Read algorithm_spec.json.
+2. Read the current source files.
+3. Read the pytest failure log.
+4. Identify the minimal root cause.
+5. Patch only necessary files.
+6. Preserve public function signatures.
+7. Do not rewrite the whole project.
+8. Do not delete tests just to make them pass.
+9. Do not weaken mathematical property tests unless they are demonstrably incorrect.
+10. If a test is wrong, explain why before modifying it.
+11. Update implementation_report.md with:
+    - failure cause
+    - files changed
+    - fix summary
+    - remaining limitations.
+
+Return valid JSON only:
+{{
+  "modified_files": {{
+    "relative/path.py": "new file content"
+  }},
+  "root_cause": "...",
+  "repair_summary": "...",
+  "remaining_limitations": ["..."]
+}}
+
+[algorithm_spec.json]
+{json.dumps(req.algorithm_spec, ensure_ascii=False, indent=2)}
+
+[current_project_files]
+{json.dumps(project_files, ensure_ascii=False, indent=2)}
+
+[pytest_result]
+{json.dumps(req.pytest_result, ensure_ascii=False, indent=2)}
+"""
+
+
+def safe_project_dir(project_name: str) -> Path:
+    """
+    Safely resolve project directory under BASE_DIR.
+
+    Prevents path traversal such as:
+        ../../somewhere
+    """
+    if not project_name:
+        raise ValueError("project_name is empty")
+
+    project_path = Path(project_name)
+
+    if project_path.is_absolute():
+        raise ValueError(f"project_name must be relative, got: {project_name}")
+
+    if ".." in project_path.parts:
+        raise ValueError(f"project_name cannot contain '..', got: {project_name}")
+
+    resolved = (BASE_DIR / project_path).resolve()
+
+    if not str(resolved).startswith(str(BASE_DIR)):
+        raise ValueError(f"Invalid project path: {resolved}")
+
+    return resolved
+
+
+def read_project_files(project_dir: Path) -> Dict[str, str]:
+    """
+    Read source/test/report files from a project directory.
+    Used by repair prompts.
+    """
+    files: Dict[str, str] = {}
+
+    skip_dirs = {
+        ".git",
+        ".venv",
+        "__pycache__",
+        ".pytest_cache",
+        ".mypy_cache",
+        ".ruff_cache",
+        ".codex",
+        "node_modules",
+    }
+
+    allowed_suffixes = {
+        ".py",
+        ".md",
+        ".json",
+        ".txt",
+        ".yml",
+        ".yaml",
+        ".toml",
+    }
+
+    for path in project_dir.rglob("*"):
+        if not path.is_file():
+            continue
+
+        rel = path.relative_to(project_dir)
+
+        if any(part in skip_dirs for part in rel.parts):
+            continue
+
+        if path.suffix not in allowed_suffixes:
+            continue
+
+        try:
+            files[rel.as_posix()] = path.read_text(encoding="utf-8")
+        except UnicodeDecodeError:
+            continue
+
+    return files
 
 
 class GenerateProjectRequest(BaseModel):
@@ -33,30 +158,6 @@ class SaveProjectRequest(BaseModel):
 
 class RunTestsRequest(BaseModel):
     project_name: str
-
-
-class RepairProjectRequest(BaseModel):
-    project_name: str
-    algorithm_spec: Dict[str, Any] = Field(default_factory=dict)
-    pytest_result: Dict[str, Any] = Field(default_factory=dict)
-    max_repair_round: int = 1
-
-
-def _safe_project_dir(project_name: str) -> Path:
-    safe_name = project_name.replace("/", "_").replace("..", "_").strip() or "guardalign_op"
-    project_dir = (BASE_DIR / safe_name).resolve()
-    if not str(project_dir).startswith(str(BASE_DIR)):
-        raise ValueError("Invalid project path")
-    return project_dir
-
-
-def _read_project_files(project_dir: Path) -> Dict[str, str]:
-    files: Dict[str, str] = {}
-    for path in project_dir.rglob("*"):
-        if path.is_file() and path.suffix in {".py", ".json", ".md", ".txt"}:
-            rel_path = path.relative_to(project_dir).as_posix()
-            files[rel_path] = path.read_text(encoding="utf-8")
-    return files
 
 
 def _write_files(project_dir: Path, files: Dict[str, str]) -> None:
@@ -87,7 +188,8 @@ def _default_algorithm_spec(req: GenerateProjectRequest) -> Dict[str, Any]:
             "patch_scores": "Tensor[M]",
             "global_score": "scalar tensor",
         },
-        "core_equations": req.equations or [
+        "core_equations": req.equations
+        or [
             "C(m,n)=1-cos(x_m,z_n)",
             "patch_score(m)=sum_n T(m,n)*C(m,n)",
         ],
@@ -117,7 +219,9 @@ def _default_algorithm_spec(req: GenerateProjectRequest) -> Dict[str, Any]:
     }
 
 
-def _mock_project_files(project_name: str, algorithm_spec: Dict[str, Any], intentionally_buggy: bool = False) -> Dict[str, str]:
+def _mock_project_files(
+    project_name: str, algorithm_spec: Dict[str, Any], intentionally_buggy: bool = False
+) -> Dict[str, str]:
     """Return a deterministic runnable GuardAlign-style OP project.
 
     Set intentionally_buggy=True only if you want to demo repair behavior by
@@ -258,7 +362,7 @@ def guardalign_op_score(
     }}
 '''.lstrip()
 
-    tests_py = '''
+    tests_py = """
 import pytest
 import torch
 
@@ -346,9 +450,9 @@ def test_invalid_feature_dim_raises():
     text = torch.randn(3, 7)
     with pytest.raises(ValueError):
         compute_cost_matrix(image, text)
-'''.lstrip()
+""".lstrip()
 
-    example_py = '''
+    example_py = """
 import torch
 
 from src.guardalign_op import guardalign_op_score
@@ -368,9 +472,9 @@ def main():
 
 if __name__ == "__main__":
     main()
-'''.lstrip()
+""".lstrip()
 
-    report_md = '''
+    report_md = """
 # Implementation Report
 
 ## Algorithm
@@ -406,9 +510,9 @@ Generate a paper-specific OP module from algorithm description and verify it wit
 2. This does not yet use CLIP or VLM embeddings.
 3. This does not compare against POT by default.
 4. Hyperparameters `epsilon` and `num_iters` may need tuning for real data.
-'''.lstrip()
+""".lstrip()
 
-    readme_md = f'''
+    readme_md = f"""
 # {project_name}
 
 Minimal generated project for GuardAlign-style OP/Sinkhorn verification.
@@ -429,7 +533,7 @@ python examples/run_toy_guardalign_op.py
 
 This project does not replace mature OT libraries such as POT or GeomLoss.
 It is a compact paper-specific OP module used to test an AI research code-generation workflow.
-'''.lstrip()
+""".lstrip()
 
     return {
         "algorithm_spec.json": json.dumps(algorithm_spec, ensure_ascii=False, indent=2),
@@ -448,7 +552,8 @@ def _mock_repair_files(current_files: Dict[str, str]) -> Dict[str, str]:
     src = current_files.get("src/guardalign_op.py", "")
     if "_INTENTIONALLY_ROW_NORMALIZE = True" in src:
         modified["src/guardalign_op.py"] = src.replace(
-            "_INTENTIONALLY_ROW_NORMALIZE = True", "_INTENTIONALLY_ROW_NORMALIZE = False"
+            "_INTENTIONALLY_ROW_NORMALIZE = True",
+            "_INTENTIONALLY_ROW_NORMALIZE = False",
         )
 
     report = current_files.get("implementation_report.md", "# Implementation Report\n")
@@ -467,7 +572,9 @@ def _mock_repair_files(current_files: Dict[str, str]) -> Dict[str, str]:
     return modified
 
 
-def _build_repair_prompt(req: RepairProjectRequest, project_files: Dict[str, str]) -> str:
+def _build_repair_prompt(
+    req: RepairProjectRequest, project_files: Dict[str, str]
+) -> str:
     return f"""
 You are repairing a generated AI research algorithm implementation.
 
@@ -527,7 +634,9 @@ def generate_project(req: GenerateProjectRequest) -> Dict[str, Any]:
     intentionally_buggy = os.getenv("MOCK_GENERATE_BUG", "0") == "1"
 
     if use_mock:
-        files = _mock_project_files(project_name, algorithm_spec, intentionally_buggy=intentionally_buggy)
+        files = _mock_project_files(
+            project_name, algorithm_spec, intentionally_buggy=intentionally_buggy
+        )
         return {
             "status": "generated",
             "mode": "mock",
@@ -537,10 +646,16 @@ def generate_project(req: GenerateProjectRequest) -> Dict[str, Any]:
             "assumptions": algorithm_spec.get("engineering_assumptions", []),
         }
 
-    result = call_codex_json(req.codex_instruction)
+    try:
+        result = call_codex_json(req.codex_instruction)
+    except Exception as e:
+        return {"status": "error", "stage": "call_codex_json", "error": str(e)}
+
     files = result.get("files", {})
     if "algorithm_spec.json" not in files:
-        files["algorithm_spec.json"] = json.dumps(algorithm_spec, ensure_ascii=False, indent=2)
+        files["algorithm_spec.json"] = json.dumps(
+            algorithm_spec, ensure_ascii=False, indent=2
+        )
     return {
         "status": "generated",
         "mode": "codex",
@@ -553,7 +668,7 @@ def generate_project(req: GenerateProjectRequest) -> Dict[str, Any]:
 
 @app.post("/save_project")
 def save_project(req: SaveProjectRequest) -> Dict[str, Any]:
-    project_dir = _safe_project_dir(req.project_name)
+    project_dir = safe_project_dir(req.project_name)
     _write_files(project_dir, req.files)
     return {
         "status": "saved",
@@ -565,16 +680,17 @@ def save_project(req: SaveProjectRequest) -> Dict[str, Any]:
 
 @app.post("/run_tests")
 def run_tests(req: RunTestsRequest) -> Dict[str, Any]:
-    project_dir = _safe_project_dir(req.project_name)
+    project_dir = safe_project_dir(req.project_name)
     if not project_dir.exists():
         return {"status": "error", "message": f"Project not found: {req.project_name}"}
 
     start_time = time.time()
 
+    env = {**os.environ, "PYTHONPATH": str(project_dir)}
     pytest_proc = subprocess.run(
         ["python", "-m", "pytest", "tests", "-q", "--tb=short"],
         cwd=project_dir,
-        env={**os.environ, "PYTHONPATH": str(project_dir)},
+        env=env,
         capture_output=True,
         text=True,
         timeout=60,
@@ -585,13 +701,18 @@ def run_tests(req: RunTestsRequest) -> Dict[str, Any]:
         example_proc = subprocess.run(
             ["python", "examples/run_toy_guardalign_op.py"],
             cwd=project_dir,
-            env={**os.environ, "PYTHONPATH": str(project_dir)},
+            env=env,
             capture_output=True,
             text=True,
             timeout=60,
         )
     else:
-        example_proc = subprocess.CompletedProcess(args=[], returncode=0, stdout="No example script found; skipped.\n", stderr="")
+        example_proc = subprocess.CompletedProcess(
+            args=[],
+            returncode=0,
+            stdout="No example script found; skipped.\n",
+            stderr="",
+        )
 
     elapsed = time.time() - start_time
     passed = pytest_proc.returncode == 0 and example_proc.returncode == 0
@@ -616,74 +737,323 @@ def run_tests(req: RunTestsRequest) -> Dict[str, Any]:
 
     reports_dir = project_dir / "reports"
     reports_dir.mkdir(exist_ok=True)
-    (reports_dir / "pytest_result.json").write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
+    (reports_dir / "pytest_result.json").write_text(
+        json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8"
+    )
     return result
 
 
-@app.post("/repair_project")
-def repair_project(req: RepairProjectRequest) -> Dict[str, Any]:
-    project_dir = _safe_project_dir(req.project_name)
-    if not project_dir.exists():
-        return {"status": "error", "message": f"Project not found: {req.project_name}"}
+@app.post("/repair_until_pass")
+def repair_until_pass(req: RepairProjectRequest):
+    try:
+        # 1. Read max repair rounds.
+        max_rounds = getattr(req, "max_repair_rounds", None)
+        if max_rounds is None:
+            max_rounds = getattr(req, "max_repair_round", 1)
 
-    # Sequential workflow compatibility: if tests already pass, skip repair.
-    if req.pytest_result.get("status") == "pass":
-        record = {
-            "status": "skipped",
-            "root_cause": "No repair needed because tests already passed.",
-            "repair_summary": "Skipped repair.",
+        try:
+            max_rounds = max(0, int(max_rounds))
+        except Exception:
+            max_rounds = 1
+
+        # 2. Resolve project directory.
+        try:
+            project_dir = safe_project_dir(req.project_name)
+        except Exception as e:
+            return {
+                "status": "error",
+                "stage": "safe_project_dir",
+                "repair_summary": str(e),
+                "history": [],
+                "rounds_used": 0,
+                "final_test_status": "unknown",
+                "modified_files": [],
+            }
+
+        if not project_dir.exists():
+            return {
+                "status": "error",
+                "stage": "project_lookup",
+                "repair_summary": f"Project not found: {req.project_name}",
+                "history": [],
+                "rounds_used": 0,
+                "final_test_status": "unknown",
+                "modified_files": [],
+            }
+
+        # 3. Normalize pytest_result.
+        current_test_result = req.pytest_result
+
+        if isinstance(current_test_result, str):
+            try:
+                current_test_result = json.loads(current_test_result)
+            except Exception:
+                current_test_result = {
+                    "status": "unknown",
+                    "raw": current_test_result,
+                }
+
+        if not isinstance(current_test_result, dict):
+            current_test_result = {
+                "status": "unknown",
+                "raw": str(current_test_result),
+            }
+
+        initial_status = current_test_result.get("status", "unknown")
+
+        if initial_status == "pass":
+            return {
+                "status": "skipped",
+                "root_cause": "",
+                "repair_summary": "Initial tests already passed. Repair skipped.",
+                "remaining_limitations": [],
+                "modified_files": [],
+                "history": [],
+                "rounds_used": 0,
+                "final_test_status": "pass",
+            }
+
+        # 4. No repair requested.
+        if max_rounds <= 0:
+            return {
+                "status": "not_repaired",
+                "root_cause": "",
+                "repair_summary": "max_repair_rounds is 0. Repair was not attempted.",
+                "remaining_limitations": [],
+                "modified_files": [],
+                "history": [],
+                "rounds_used": 0,
+                "final_test_status": initial_status,
+            }
+
+        history = []
+        all_modified_files = []
+
+        for round_idx in range(1, max_rounds + 1):
+            project_files = read_project_files(project_dir)
+
+            # Important:
+            # Use the latest current_test_result, not only the initial failure.
+            try:
+                repair_req = req.copy(update={"pytest_result": current_test_result})
+            except Exception:
+                repair_req = req
+
+            repair_prompt = build_repair_prompt(repair_req, project_files)
+
+            try:
+                codex_result = call_codex_json(repair_prompt)
+            except Exception as e:
+                history_item = {
+                    "round": round_idx,
+                    "status_after_repair": "codex_error",
+                    "root_cause": "call_codex_json failed",
+                    "repair_summary": repr(e),
+                    "modified_files": [],
+                }
+                history.append(history_item)
+
+                return {
+                    "status": "error",
+                    "stage": "call_codex_json",
+                    "root_cause": "Codex repair failed",
+                    "repair_summary": repr(e),
+                    "remaining_limitations": [],
+                    "modified_files": sorted(set(all_modified_files)),
+                    "history": history,
+                    "rounds_used": round_idx - 1,
+                    "final_test_status": "unknown",
+                }
+
+            modified_files = codex_result.get("modified_files", {})
+
+            if isinstance(modified_files, list):
+                modified_files_dict = {}
+                modified_file_names = modified_files
+            elif isinstance(modified_files, dict):
+                modified_files_dict = modified_files
+                modified_file_names = list(modified_files_dict.keys())
+            else:
+                modified_files_dict = {}
+                modified_file_names = []
+
+            # 5. Apply patches.
+            for rel_path, content in modified_files_dict.items():
+                file_path = (project_dir / rel_path).resolve()
+
+                if not str(file_path).startswith(str(project_dir)):
+                    return {
+                        "status": "error",
+                        "stage": "apply_patch",
+                        "repair_summary": f"Invalid modified path: {rel_path}",
+                        "history": history,
+                        "rounds_used": round_idx - 1,
+                        "final_test_status": "unknown",
+                        "modified_files": sorted(set(all_modified_files)),
+                    }
+
+                file_path.parent.mkdir(parents=True, exist_ok=True)
+                file_path.write_text(content, encoding="utf-8")
+
+            all_modified_files.extend(modified_file_names)
+
+            # 6. Re-run tests internally after this repair round.
+            test_req = RunTestsRequest(project_name=req.project_name)
+            current_test_result = run_tests(test_req)
+
+            if not isinstance(current_test_result, dict):
+                current_test_result = {
+                    "status": "unknown",
+                    "raw": str(current_test_result),
+                }
+
+            test_status = current_test_result.get("status", "unknown")
+
+            history_item = {
+                "round": round_idx,
+                "status_after_repair": test_status,
+                "root_cause": codex_result.get("root_cause", ""),
+                "repair_summary": codex_result.get("repair_summary", ""),
+                "modified_files": modified_file_names,
+            }
+            history.append(history_item)
+
+            reports_dir = project_dir / "reports"
+            reports_dir.mkdir(exist_ok=True)
+
+            (reports_dir / "repair_until_pass_history.json").write_text(
+                json.dumps(history, ensure_ascii=False, indent=2),
+                encoding="utf-8",
+            )
+
+            (
+                reports_dir / f"pytest_result_after_repair_round_{round_idx}.json"
+            ).write_text(
+                json.dumps(current_test_result, ensure_ascii=False, indent=2),
+                encoding="utf-8",
+            )
+
+            if test_status == "pass":
+                return {
+                    "status": "repaired",
+                    "root_cause": codex_result.get("root_cause", ""),
+                    "repair_summary": f"Tests passed after repair round {round_idx}.",
+                    "remaining_limitations": codex_result.get(
+                        "remaining_limitations", []
+                    ),
+                    "modified_files": sorted(set(all_modified_files)),
+                    "history": history,
+                    "rounds_used": round_idx,
+                    "final_test_status": "pass",
+                }
+
+        # 7. All repair rounds used, still not pass.
+        return {
+            "status": "failed_after_repairs",
+            "root_cause": history[-1].get("root_cause", "") if history else "",
+            "repair_summary": f"Tests did not pass after {max_rounds} repair rounds.",
             "remaining_limitations": [],
+            "modified_files": sorted(set(all_modified_files)),
+            "history": history,
+            "rounds_used": len(history),
+            "final_test_status": current_test_result.get("status", "unknown"),
+        }
+
+    except Exception as e:
+        return {
+            "status": "error",
+            "stage": "repair_until_pass_unhandled_exception",
+            "repair_summary": repr(e),
+            "history": [],
+            "rounds_used": 0,
+            "final_test_status": "unknown",
             "modified_files": [],
         }
-        return record
 
-    project_files = _read_project_files(project_dir)
-    use_mock = os.getenv("MOCK_REPAIR", "1") == "1"
 
-    if use_mock:
-        modified_files = _mock_repair_files(project_files)
-        root_cause = "Detected a likely Sinkhorn marginal/normalization issue or used deterministic mock repair."
-        repair_summary = "Applied deterministic repair patch if the known demo bug was present."
-        remaining_limitations = ["Mock repair only fixes the known marginal-normalization demo bug."]
-    else:
-        repair_prompt = _build_repair_prompt(req, project_files)
-        result = call_codex_json(repair_prompt)
-        modified_files = result.get("modified_files", {})
-        root_cause = result.get("root_cause", "")
-        repair_summary = result.get("repair_summary", "")
-        remaining_limitations = result.get("remaining_limitations", [])
+# @app.post("/repair_project")
+# def repair_project(req: RepairProjectRequest) -> Dict[str, Any]:
+#     if req.pytest_result.get("status") == "pass":
+#         return {
+#             "status": "skipped",
+#             "root_cause": "",
+#             "repair_summary": "Initial tests already passed. Repair was skipped.",
+#             "remaining_limitations": [],
+#             "modified_files": [],
+#         }
 
-    if modified_files:
-        _write_files(project_dir, modified_files)
+#     project_dir = safe_project_dir(req.project_name)
+#     if not project_dir.exists():
+#         return {"status": "error", "message": f"Project not found: {req.project_name}"}
 
-    repair_record = {
-        "status": "repaired" if modified_files else "no_changes",
-        "root_cause": root_cause,
-        "repair_summary": repair_summary,
-        "remaining_limitations": remaining_limitations,
-        "modified_files": list(modified_files.keys()),
-    }
+#     # Sequential workflow compatibility: if tests already pass, skip repair.
+#     if req.pytest_result.get("status") == "pass":
+#         record = {
+#             "status": "skipped",
+#             "root_cause": "No repair needed because tests already passed.",
+#             "repair_summary": "Skipped repair.",
+#             "remaining_limitations": [],
+#             "modified_files": [],
+#         }
+#         return record
 
-    reports_dir = project_dir / "reports"
-    reports_dir.mkdir(exist_ok=True)
-    history_path = reports_dir / "repair_history.json"
-    if history_path.exists():
-        history = json.loads(history_path.read_text(encoding="utf-8"))
-    else:
-        history = []
-    history.append(repair_record)
-    history_path.write_text(json.dumps(history, ensure_ascii=False, indent=2), encoding="utf-8")
+#     project_files = _read_project_files(project_dir)
+#     use_mock = os.getenv("MOCK_REPAIR", "1") == "1"
 
-    return repair_record
+#     if use_mock:
+#         modified_files = _mock_repair_files(project_files)
+#         root_cause = "Detected a likely Sinkhorn marginal/normalization issue or used deterministic mock repair."
+#         repair_summary = (
+#             "Applied deterministic repair patch if the known demo bug was present."
+#         )
+#         remaining_limitations = [
+#             "Mock repair only fixes the known marginal-normalization demo bug."
+#         ]
+#     else:
+#         repair_prompt = _build_repair_prompt(req, project_files)
+#         result = call_codex_json(repair_prompt)
+#         modified_files = result.get("modified_files", {})
+#         root_cause = result.get("root_cause", "")
+#         repair_summary = result.get("repair_summary", "")
+#         remaining_limitations = result.get("remaining_limitations", [])
+
+#     if modified_files:
+#         _write_files(project_dir, modified_files)
+
+#     repair_record = {
+#         "status": "repaired" if modified_files else "no_changes",
+#         "root_cause": root_cause,
+#         "repair_summary": repair_summary,
+#         "remaining_limitations": remaining_limitations,
+#         "modified_files": list(modified_files.keys()),
+#     }
+
+#     reports_dir = project_dir / "reports"
+#     reports_dir.mkdir(exist_ok=True)
+#     history_path = reports_dir / "repair_history.json"
+#     if history_path.exists():
+#         history = json.loads(history_path.read_text(encoding="utf-8"))
+#     else:
+#         history = []
+#     history.append(repair_record)
+#     history_path.write_text(
+#         json.dumps(history, ensure_ascii=False, indent=2), encoding="utf-8"
+#     )
+
+#     return repair_record
 
 
 @app.get("/read_project_summary/{project_name}")
 def read_project_summary(project_name: str) -> Dict[str, Any]:
-    project_dir = _safe_project_dir(project_name)
+    project_dir = safe_project_dir(project_name)
     if not project_dir.exists():
         return {"status": "error", "message": f"Project not found: {project_name}"}
 
-    files = sorted(path.relative_to(project_dir).as_posix() for path in project_dir.rglob("*") if path.is_file())
+    files = sorted(
+        path.relative_to(project_dir).as_posix()
+        for path in project_dir.rglob("*")
+        if path.is_file()
+    )
     report_path = project_dir / "implementation_report.md"
     report = report_path.read_text(encoding="utf-8") if report_path.exists() else ""
     return {
