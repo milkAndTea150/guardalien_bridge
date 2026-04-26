@@ -1,0 +1,109 @@
+{
+  "algorithm_name": "GuadAlien-OP",
+  "research_context": "GuardAlign models image patch embeddings and unsafe text embeddings as two discrete distributions to compute patch-level suspiciousness using Optimal Transport.",
+  "task_type": "Optimal Transport based Alignment",
+  "goal": "To compute patch-level suspiciousness scores by minimizing the transport cost between image patches and unsafe text embeddings using entropic optimal transport.",
+  "inputs": {
+    "image_patches": "Tensor of shape (M, D) representing M image patch embeddings",
+    "text_embeddings": "Tensor of shape (N, D) representing N unsafe text embeddings"
+  },
+  "outputs": {
+    "patch_scores": "Tensor of shape (M,) representing the suspiciousness score for each image patch",
+    "transport_plan": "Tensor of shape (M, N) representing the optimal transport coupling matrix"
+  },
+  "symbols": {
+    "X": "Image patch embeddings matrix",
+    "Z": "Unsafe text embeddings matrix",
+    "C": "Cost matrix based on cosine distance",
+    "T": "Optimal transport plan matrix",
+    "M": "Number of image patches",
+    "N": "Number of text tokens"
+  },
+  "core_equations": [
+    "C(m,n) = 1 - cos(x_m, z_n)",
+    "OT = <T, C>",
+    "patch_score(m) = sum_n T(m,n) * C(m,n)"
+  ],
+  "core_steps": [
+    "Normalize input embeddings to unit length for cosine similarity calculation.",
+    "Compute the pairwise cosine distance cost matrix C between image patches and text embeddings.",
+    "Apply the Sinkhorn algorithm to compute the entropic optimal transport plan T.",
+    "Calculate patch-level suspiciousness scores by summing the element-wise product of T and C over the text dimension."
+  ],
+  "functions": [
+    {
+      "name": "compute_cosine_cost_matrix",
+      "purpose": "Calculates the pairwise cosine distance between two sets of embeddings.",
+      "inputs": "image_patches (Tensor), text_embeddings (Tensor)",
+      "outputs": "cost_matrix (Tensor)",
+      "paper_step_mapping": "Implements equation C(m,n) = 1 - cos(x_m, z_n)"
+    },
+    {
+      "name": "sinkhorn_algorithm",
+      "purpose": "Computes the optimal transport plan using entropic regularization.",
+      "inputs": "cost_matrix (Tensor), reg (number), max_iter (number)",
+      "outputs": "transport_plan (Tensor)",
+      "paper_step_mapping": "Implements the computation of T via Sinkhorn for entropic OT"
+    },
+    {
+      "name": "calculate_patch_suspiciousness",
+      "purpose": "Aggregates transport cost to determine patch-level scores.",
+      "inputs": "transport_plan (Tensor), cost_matrix (Tensor)",
+      "outputs": "patch_scores (Tensor)",
+      "paper_step_mapping": "Implements equation patch_score(m) = sum_n T(m,n) * C(m,n)"
+    }
+  ],
+  "engineering_assumptions": [
+    "Uniform marginal distributions (weights) are assumed for both image patches and text embeddings since specific weights are not provided.",
+    "The entropy regularization parameter (epsilon) is a tunable hyperparameter.",
+    "Input embeddings are assumed to be pre-normalized or will be normalized internally."
+  ],
+  "ambiguity_notes": [
+    "The paper excerpt does not specify the value for the entropy regularization coefficient.",
+    "The specific definition of 'unsafe text embeddings' implies a pre-existing embedding model, which is treated as an external input."
+  ],
+  "reference_libraries": [
+    {
+      "name": "POT",
+      "role": "Optional reference oracle for validating Sinkhorn implementation"
+    },
+    {
+      "name": "GeomLoss",
+      "role": "Optional reference oracle for differentiable OT backend"
+    }
+  ],
+  "required_tests": [
+    {
+      "name": "cost_matrix_properties",
+      "purpose": "Verify the cost matrix calculation is correct and bounded.",
+      "expected_property": "Cost matrix values should be in range [0, 2] for cosine distance."
+    },
+    {
+      "name": "transport_marginals",
+      "purpose": "Ensure the Sinkhorn algorithm produces a valid transport plan.",
+      "expected_property": "The sum of rows and columns of the transport plan T should match the source and target marginals (within tolerance)."
+    },
+    {
+      "name": "patch_score_aggregation",
+      "purpose": "Verify the patch score calculation logic.",
+      "expected_property": "Patch scores should be non-negative."
+    }
+  ],
+  "demo_scope": {
+    "must_have": [
+      "Synthetic generation of image patch and text embeddings on CPU.",
+      "Computation of cost matrix.",
+      "Execution of Sinkhorn algorithm.",
+      "Output of patch suspiciousness scores."
+    ],
+    "optional": [
+      "Visualization of the cost matrix or transport plan.",
+      "Benchmarking against POT library."
+    ],
+    "out_of_scope": [
+      "Loading real images or text data.",
+      "Training the embedding models.",
+      "GPU-specific optimizations."
+    ]
+  }
+}

@@ -6,6 +6,9 @@ import torch
 import torch.nn.functional as F
 
 
+Tensor = torch.Tensor
+
+
 def _validate_embeddings(image_embeds: torch.Tensor, text_embeds: torch.Tensor) -> None:
     if image_embeds.ndim != 2 or text_embeds.ndim != 2:
         raise ValueError("image_embeds and text_embeds must both be 2D tensors")
@@ -16,10 +19,10 @@ def _validate_embeddings(image_embeds: torch.Tensor, text_embeds: torch.Tensor) 
 
 
 def compute_cost_matrix(
-    image_embeds: torch.Tensor,
-    text_embeds: torch.Tensor,
+    image_embeds: Tensor,
+    text_embeds: Tensor,
     eps: float = 1e-8,
-) -> torch.Tensor:
+) -> Tensor:
     """Compute cosine-distance costs C(i,j)=1-cos(x_i, z_j)."""
     _validate_embeddings(image_embeds, text_embeds)
     image_norm = F.normalize(image_embeds.float(), p=2, dim=1, eps=eps)
@@ -29,15 +32,15 @@ def compute_cost_matrix(
 
 
 def sinkhorn_transport(
-    cost_matrix: torch.Tensor,
+    cost_matrix: Tensor,
     epsilon: float = 0.05,
     num_iters: int = 100,
     tol: float = 1e-6,
-) -> torch.Tensor:
+) -> Tensor:
     """Compute an entropic OT plan with uniform marginals."""
     if cost_matrix.ndim != 2:
         raise ValueError("cost_matrix must be a 2D tensor")
-    if cost_matrix.shape[0] == 0 or cost_matrix.shape[1] == 0:
+    if cost_matrix.numel() == 0:
         raise ValueError("cost_matrix must be non-empty")
     if epsilon <= 0:
         raise ValueError("epsilon must be positive")
@@ -57,19 +60,19 @@ def sinkhorn_transport(
     v = torch.ones_like(b)
 
     for _ in range(num_iters):
-        u = a / (kernel @ v).clamp_min(1e-12)
-        v = b / (kernel.T @ u).clamp_min(1e-12)
-
-        plan = u[:, None] * kernel * v[None, :]
-        row_err = (plan.sum(dim=1) - a).abs().max()
-        col_err = (plan.sum(dim=0) - b).abs().max()
-        if max(row_err.item(), col_err.item()) < tol:
+        u_prev = u
+        kv = kernel @ v
+        u = a / kv.clamp_min(1e-12)
+        ktu = kernel.T @ u
+        v = b / ktu.clamp_min(1e-12)
+        if torch.max(torch.abs(u - u_prev)).item() < tol:
             break
 
-    return (u[:, None] * kernel * v[None, :]).clamp_min(0.0)
+    transport_plan = u[:, None] * kernel * v[None, :]
+    return transport_plan.clamp_min(0.0)
 
 
-def compute_patch_scores(transport_plan: torch.Tensor, cost_matrix: torch.Tensor) -> torch.Tensor:
+def compute_patch_scores(transport_plan: Tensor, cost_matrix: Tensor) -> Tensor:
     """Aggregate row-wise transported cost into one score per image patch."""
     if transport_plan.shape != cost_matrix.shape:
         raise ValueError("transport_plan and cost_matrix must have the same shape")
@@ -77,22 +80,23 @@ def compute_patch_scores(transport_plan: torch.Tensor, cost_matrix: torch.Tensor
 
 
 def guardalign_op_score(
-    image_embeds: torch.Tensor,
-    text_embeds: torch.Tensor,
+    image_embeds: Tensor,
+    text_embeds: Tensor,
     epsilon: float = 0.05,
     num_iters: int = 100,
-    tol: float = 1e-6,
-) -> Dict[str, torch.Tensor]:
+) -> Dict[str, Tensor]:
     """Run the full OP scoring pipeline on precomputed embeddings."""
     cost_matrix = compute_cost_matrix(image_embeds, text_embeds)
-    transport_plan = sinkhorn_transport(cost_matrix, epsilon=epsilon, num_iters=num_iters, tol=tol)
+    transport_plan = sinkhorn_transport(
+        cost_matrix,
+        epsilon=epsilon,
+        num_iters=num_iters,
+    )
     patch_scores = compute_patch_scores(transport_plan, cost_matrix)
-    ot_cost = torch.sum(transport_plan * cost_matrix)
     return {
         "cost_matrix": cost_matrix,
         "transport_plan": transport_plan,
         "patch_scores": patch_scores,
-        "ot_cost": ot_cost,
     }
 
 

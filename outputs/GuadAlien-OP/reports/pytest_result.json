@@ -1,0 +1,17 @@
+{
+  "status": "pass",
+  "project_name": "GuadAlien-OP",
+  "elapsed_seconds": 1.505309820175171,
+  "pytest": {
+    "command": "python -m pytest tests -q --tb=short",
+    "returncode": 0,
+    "stdout": "..........                                                               [100%]\n10 passed in 0.50s\n",
+    "stderr": ""
+  },
+  "example": {
+    "command": "python examples/run_toy_guardalign_op.py",
+    "returncode": 0,
+    "stdout": "Cost matrix:\ntensor([[0.0000, 1.0000],\n        [0.0299, 0.7575],\n        [1.0000, 0.0000],\n        [1.0000, 0.8896]])\n\nTransport plan:\ntensor([[2.4940e-01, 1.1709e-08],\n        [2.4940e-01, 2.7196e-06],\n        [2.2677e-11, 2.5060e-01],\n        [1.2027e-03, 2.4939e-01]])\n\nPatch suspiciousness scores:\ntensor([1.1709e-08, 7.4484e-03, 2.2677e-11, 2.2306e-01])\n",
+    "stderr": ""
+  }
+}

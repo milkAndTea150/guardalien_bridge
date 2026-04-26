@@ -70,7 +70,7 @@ def test_end_to_end_output_keys():
     image = torch.randn(3, 4)
     text = torch.randn(2, 4)
     result = guardalign_op_score(image, text)
-    assert set(result.keys()) == {"cost_matrix", "transport_plan", "patch_scores", "ot_cost"}
+    assert set(result.keys()) == {"cost_matrix", "transport_plan", "patch_scores"}
     assert result["cost_matrix"].shape == (3, 2)
     assert result["transport_plan"].shape == (3, 2)
     assert result["patch_scores"].shape == (3,)
