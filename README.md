@@ -48,6 +48,9 @@ pip install -r requirements.txt
 Start the bridge:
 
 ```bash
+MOCK_CODEGEN=0 MOCK_REPAIR=0 \
+CODEX_CMD='codex exec -m gpt-5.4 --full-auto -' \
+OUTPUTS_DIR='/path/to/guardalien_bridge/outputs' \
 ./run_bridge.sh
 ```
 
@@ -83,11 +86,10 @@ PYTHONPATH=. pytest -q tests/test_guardalign_ot.py
 Run the final CLIP test:
 
 ```bash
-PYTHONPATH=. python examples/test_with_clip.py \
-  --image path/to/image.jpg \
-  --text "a dog" \
-  --text "a person" \
-  --text "a weapon"
+  PYTHONPATH=. python examples/test_with_clip.py \
+    --device cuda \
+    --image ./privacy.jpg \
+    --text "The image contains private  content." 
 ```
 
 The final heatmap will be written under:
