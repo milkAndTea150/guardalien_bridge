@@ -86,10 +86,7 @@ PYTHONPATH=. pytest -q tests/test_guardalign_ot.py
 Run the final CLIP test:
 
 ```bash
-  PYTHONPATH=. python examples/test_with_clip.py \
-    --device cuda \
-    --image ./privacy.jpg \
-    --text "The image contains private  content." 
+PYTHONPATH=. python examples/test_with_clip.py --image ./privacy.jpg --text "The image contains private contens."
 ```
 
 The final heatmap will be written under:

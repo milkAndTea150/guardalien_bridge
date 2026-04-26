@@ -21,11 +21,7 @@ PYTHONPATH=. pytest -q tests/test_guardalign_ot.py
 ## Run CLIP Demo
 
 ```bash
-PYTHONPATH=. python examples/test_with_clip.py \
-  --image path/to/image.jpg \
-  --text "a dog" \
-  --text "a person" \
-  --text "a weapon"
+PYTHONPATH=. python examples/test_with_clip.py --image ./privacy.jpg --text "The image contains private contens."
 ```
 
 The demo will:
